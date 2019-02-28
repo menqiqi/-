@@ -47,11 +47,19 @@
 
     <!--H2数据库以及驱动（JDBC API）-->
     <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>1.4.197</version>
-        <scope>test</scope>
+
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+
     </dependency>
+
+        <!--数据库的连接池（目的：提高数据库的效率）-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.2</version>
+        </dependency>
 
     </dependencies>
 

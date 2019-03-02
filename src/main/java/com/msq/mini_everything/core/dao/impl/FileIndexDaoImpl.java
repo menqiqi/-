@@ -1,6 +1,5 @@
 package com.msq.mini_everything.core.dao.impl;
 
-import com.msq.mini_everything.core.dao.DataSourceFactory;
 import com.msq.mini_everything.core.dao.FileIndexDao;
 import com.msq.mini_everything.core.model.Condition;
 import com.msq.mini_everything.core.model.FileType;
@@ -43,7 +42,29 @@ public class FileIndexDaoImpl implements FileIndexDao {
             //5.执行命令
             statement.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            releaseResource(null,statement,connection);
+        }
+    }
 
+    @Override
+    public void delete(Thing thing) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            //1.获取数据库连接
+            connection = dataSource.getConnection();
+            //2.准备SQL语句
+            String sql = "delete from file_index where path like '" + thing.getPath() + "%'";
+            //3.准备命令
+            statement = connection.prepareStatement(sql);
+            //4.设置参数
+            //5.执行命令
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             releaseResource(null,statement,connection);
         }
@@ -78,11 +99,15 @@ public class FileIndexDaoImpl implements FileIndexDao {
                         .append("' ");
             }
             //limit orderby必选
-            sqlBuilder.append(" order by depth ")
-                    .append(condition.getOrderByAsc() ? "asc" : "desc")
-                    .append(" limit ")
-                    .append(condition.getLimit())
-                    .append(" offset 0 ");
+            if (condition.getOrderByAsc() != null){
+                sqlBuilder.append(" order by depth ")
+                        .append(condition.getOrderByAsc() ? "asc" : "desc");
+            }
+            if (condition.getLimit() != null){
+                sqlBuilder .append(" limit ")
+                        .append(condition.getLimit())
+                        .append(" offset 0 ");
+            }
 
             //准备命令
             statement = connection.prepareStatement(sqlBuilder.toString());
@@ -102,7 +127,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
                 things.add(thing);
             }
         } catch (SQLException e) {
-
+            e.printStackTrace();
         } finally {
             releaseResource(resultSet, statement, connection);
         }

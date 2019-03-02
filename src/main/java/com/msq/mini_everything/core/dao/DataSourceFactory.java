@@ -1,6 +1,7 @@
 package com.msq.mini_everything.core.dao;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.msq.mini_everything.config.MiniEverythingConfig;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -28,12 +29,14 @@ public class DataSourceFactory {
                     //获取当前工程路径
                     String workDir = System.getProperty("user.dir");
                     //JDBC规范中关于H2 jdbc:h2:/filepath -> 存储到本地文件
-                    dataSource.setUrl("jdbc:h2:"+workDir+File.separator+"mini_everything");
+                    dataSource.setUrl("jdbc:h2:"+ MiniEverythingConfig.getInstance().getH2IndexPath());
                 }
             }
         }
         return dataSource;
     }
+
+
 
    public static void initDatabase(){
         //1.获取数据源
@@ -71,7 +74,7 @@ public class DataSourceFactory {
            statement.close();
 
        } catch (IOException e) {
-
+           e.printStackTrace();
        } catch (SQLException e) {
            e.printStackTrace();
        }

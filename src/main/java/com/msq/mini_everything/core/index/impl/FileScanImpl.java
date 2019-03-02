@@ -1,12 +1,8 @@
 package com.msq.mini_everything.core.index.impl;
 
 import com.msq.mini_everything.config.MiniEverythingConfig;
-import com.msq.mini_everything.core.dao.DataSourceFactory;
-import com.msq.mini_everything.core.dao.impl.FileIndexDaoImpl;
 import com.msq.mini_everything.core.index.FileScan;
 import com.msq.mini_everything.core.interceptor.FileInterceptor;
-import com.msq.mini_everything.core.interceptor.impl.FileIndexInterceptor;
-import com.msq.mini_everything.core.interceptor.impl.FilePrintInterceptor;
 
 import java.io.File;
 import java.util.LinkedList;

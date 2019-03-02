@@ -12,7 +12,7 @@
     <!--项目名称-->
     <name>mini_everything</name>
     <!--项目描述-->
-    <description>这是一个方便实用的Java版Everything工具。</description>
+    <description>这是一个方便实用的Java版Everything工具。可以快速准确的在你的电脑中找到你想要的文件。</description>
     <!--开发者信息-->
     <developers>
         <developer>
@@ -42,7 +42,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.6</version>
-            <scope>provided</scope>
         </dependency>
 
     <!--H2数据库以及驱动（JDBC API）-->
@@ -73,6 +72,27 @@
                 <version>3.6.1</version>
             </plugin>
 
+            <!--依赖管理插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!--打包插件-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -82,6 +102,8 @@
                     <archive>
                         <manifest>
                             <!--配置主类-->
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
                             <mainClass>com.msq.mini_everything.cmd.MiniEverythingCmd</mainClass>
                         </manifest>
                     </archive>

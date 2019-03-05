@@ -1,6 +1,6 @@
 package com.msq.mini_everything.core.index;
 
-import com.msq.mini_everything.core.interceptor.FileInterceptor;
+import com.msq.mini_everything.core.Interceptor.FileInterceptor;
 
 public interface FileScan {
 

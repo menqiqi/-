@@ -1,4 +1,4 @@
-package com.msq.mini_everything.core.interceptor;
+package com.msq.mini_everything.core.Interceptor;
 
 import com.msq.mini_everything.core.model.Thing;
 

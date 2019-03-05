@@ -1,9 +1,9 @@
-package com.msq.mini_everything.core.Search.Impl;
+package com.msq.mini_everything.core.search.impl;
 
-import com.msq.mini_everything.core.Search.FileSearch;
 import com.msq.mini_everything.core.dao.FileIndexDao;
 import com.msq.mini_everything.core.model.Condition;
 import com.msq.mini_everything.core.model.Thing;
+import com.msq.mini_everything.core.search.FileSearch;
 
 import java.util.ArrayList;
 import java.util.List;

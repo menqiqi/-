@@ -1,6 +1,8 @@
 package com.msq.mini_everything.config;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.File;
 import java.nio.file.FileSystem;
@@ -10,10 +12,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Getter
+@ToString
 public class MiniEverythingConfig {
 
     private static volatile MiniEverythingConfig config;
-
 
     /**
      * 建立索引的路径
@@ -24,6 +26,18 @@ public class MiniEverythingConfig {
      * 排除索引文件的路径
      */
     private Set<String> excludePath = new HashSet<>();
+
+    /**
+     * 检索最大的返回值数量
+     */
+    @Setter
+    private Integer maxReturn = 25;
+
+    /**
+     * 深度排序，默认升序
+     */
+    @Setter
+    private Boolean deptOrder = true;
 
     /**
      * H2数据库文件路径
@@ -46,11 +60,11 @@ public class MiniEverythingConfig {
         //windows:C:\Windows C:\ProgramFiles(X86) C:\ProgramFiles C:\ProgramData
         //linux: /tmp /etc
         String osname = System.getProperty("os.name");
-        if (osname.startsWith("windows")){
+        if (osname.startsWith("Windows")){
             //windos系统
             config.getExcludePath().add("C:\\Windows");
-            config.getExcludePath().add("C:\\ProgramFiles(x86)");
-            config.getExcludePath().add("C:\\ProgramFiles");
+            config.getExcludePath().add("C:\\Program Files(x86)");
+            config.getExcludePath().add("C:\\Program Files");
             config.getExcludePath().add(" C:\\ProgramData");
         }else {
             //linux系统

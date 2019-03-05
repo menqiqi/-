@@ -5,18 +5,13 @@ import com.msq.mini_everything.core.model.Thing;
 
 import java.io.File;
 
-
-/**
- * 辅助工具类，将File对象转化为Thing对象
- */
 public final class FileConvertThing {
-
     private FileConvertThing(){}
 
-    public static Thing covert(File file){
+    public static Thing convert(File file){
         Thing thing = new Thing();
         thing.setName(file.getName());
-        thing.setPath(file.getPath());
+        thing.setPath(file.getAbsolutePath());
         thing.setDepth(computerFileDepth(file));
         thing.setFileType(computerFileType(file));
         return thing;
@@ -33,12 +28,10 @@ public final class FileConvertThing {
         }
         String fileName = file.getName();
         int index = fileName.lastIndexOf(".");
-        //防止数组越界，if index=length-1，会发生越界
         if (index != -1 && index < fileName.length() - 1){
-            String extend = file.getName().substring(index + 1);
+            String extend = fileName.substring(index + 1);
             return FileType.lookup(extend);
-        }else {
-            return FileType.OTHER;
         }
+        return FileType.OTHER;
     }
 }

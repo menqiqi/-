@@ -70,6 +70,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
         }
     }
 
+
     @Override
     public List<Thing> search(Condition condition) {
         List<Thing> things = new ArrayList<>();
@@ -104,7 +105,7 @@ public class FileIndexDaoImpl implements FileIndexDao {
                         .append(condition.getOrderByAsc() ? "asc" : "desc");
             }
             if (condition.getLimit() != null){
-                sqlBuilder .append(" limit ")
+                sqlBuilder.append(" limit ")
                         .append(condition.getLimit())
                         .append(" offset 0 ");
             }

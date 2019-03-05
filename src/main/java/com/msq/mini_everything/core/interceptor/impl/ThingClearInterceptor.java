@@ -1,7 +1,7 @@
-package com.msq.mini_everything.core.interceptor.impl;
+package com.msq.mini_everything.core.Interceptor.impl;
 
+import com.msq.mini_everything.core.Interceptor.ThingInterceptor;
 import com.msq.mini_everything.core.dao.FileIndexDao;
-import com.msq.mini_everything.core.interceptor.ThingInterceptor;
 import com.msq.mini_everything.core.model.Thing;
 
 import java.util.Queue;
@@ -29,7 +29,6 @@ public class ThingClearInterceptor implements ThingInterceptor, Runnable {
             if (thing != null){
                 fileIndexDao.delete(thing);
             }
-            fileIndexDao.delete(thing);
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {

@@ -1,17 +1,20 @@
 package com.msq.mini_everything.core;
 
 import com.msq.mini_everything.config.MiniEverythingConfig;
-import com.msq.mini_everything.core.Search.FileSearch;
-import com.msq.mini_everything.core.Search.Impl.FileSearchImpl;
+import com.msq.mini_everything.core.Interceptor.impl.FileIndexInterceptor;
+import com.msq.mini_everything.core.Interceptor.impl.ThingClearInterceptor;
+import com.msq.mini_everything.core.common.HandlePath;
 import com.msq.mini_everything.core.dao.DataSourceFactory;
 import com.msq.mini_everything.core.dao.FileIndexDao;
 import com.msq.mini_everything.core.dao.impl.FileIndexDaoImpl;
 import com.msq.mini_everything.core.index.FileScan;
 import com.msq.mini_everything.core.index.impl.FileScanImpl;
-import com.msq.mini_everything.core.interceptor.impl.FileIndexInterceptor;
-import com.msq.mini_everything.core.interceptor.impl.ThingClearInterceptor;
 import com.msq.mini_everything.core.model.Condition;
 import com.msq.mini_everything.core.model.Thing;
+import com.msq.mini_everything.core.monitor.FileWatch;
+import com.msq.mini_everything.core.monitor.impl.FileWatchImpl;
+import com.msq.mini_everything.core.search.FileSearch;
+import com.msq.mini_everything.core.search.impl.FileSearchImpl;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -25,9 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class MiniEverythingManager {
+public final class MiniEverythingManager {
 
-    private static MiniEverythingManager manager;
+    private static volatile MiniEverythingManager manager;
 
     private FileSearch fileSearch;
 
@@ -43,6 +46,11 @@ public class MiniEverythingManager {
     private AtomicBoolean backgroundClearThreadStatus = new AtomicBoolean(false);
 
 
+    /**
+     * 文件监控
+     */
+    private FileWatch fileWatch;
+
     public MiniEverythingManager() {
         this.initComponent();
     }
@@ -51,10 +59,7 @@ public class MiniEverythingManager {
         //数据源对象
         DataSource dataSource = DataSourceFactory.dataSource();
 
-        /**
-         * 检查数据库
-         */
-        checkDatabase();
+        initOrResetDatabase();
 
         //业务层对象
         FileIndexDao fileIndexDao = new FileIndexDaoImpl(dataSource);
@@ -67,14 +72,13 @@ public class MiniEverythingManager {
         this.backgroundClearThread = new Thread(this.thingClearInterceptor);
         this.backgroundClearThread.setName("Thread-Thing-Clear");
         this.backgroundClearThread.setDaemon(true);
+
+        //文件监控对象
+        this.fileWatch = new FileWatchImpl(fileIndexDao);
     }
 
-    private void checkDatabase(){
-        String fileName = MiniEverythingConfig.getInstance().getH2IndexPath() + File.separator + ".mv.db";
-        File dbFile = new File(fileName);
-        if (dbFile.isFile() && !dbFile.exists()){
-            DataSourceFactory.initDatabase();
-        }
+    public void initOrResetDatabase(){
+        DataSourceFactory.initDatabase();
     }
 
     public static MiniEverythingManager getInstance(){
@@ -109,6 +113,7 @@ public class MiniEverythingManager {
      * 索引
      */
     public void buildIndex(){
+        initOrResetDatabase();
         Set<String> directories = MiniEverythingConfig.getInstance().getIncludePath();
 
         if (this.executorService == null){
@@ -125,26 +130,24 @@ public class MiniEverythingManager {
 
         final CountDownLatch countDownLatch = new CountDownLatch(directories.size());
 
-        System.out.println("Build index start ...");
+        //System.out.println("Build index start ...");
         for (String path : directories){
-           this.executorService.submit(new Runnable() {
-               @Override
-               public void run() {
-                   MiniEverythingManager.this.fileScan.index(path);
-                   //当前任务完成，值-1
-                   countDownLatch.countDown();
-               }
-           });
+            this.executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    MiniEverythingManager.this.fileScan.index(path);
+                    //当前任务完成，值-1
+                    countDownLatch.countDown();
+                }
+            });
         }
-
-
         //阻塞，直到任务完成，值为0
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Build index complete ...");
+        //System.out.println("Build index complete ...");
     }
 
     /**
@@ -156,5 +159,23 @@ public class MiniEverythingManager {
         }else {
             System.out.println("Cant repeat start BackgroundClearThread");
         }
+    }
+
+    /**
+     * 启动文件系统监听
+     */
+    public void startFileSystemMonitor(){
+        MiniEverythingConfig config = MiniEverythingConfig.getInstance();
+        HandlePath handlePath = new HandlePath();
+        handlePath.setIncludePath(config.getIncludePath());
+        handlePath.setExcludePath(config.getIncludePath());
+        this.fileWatch.monitor(handlePath);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //System.out.println("文件系统监控启动");
+                fileWatch.start();
+            }
+        }).start();
     }
 }

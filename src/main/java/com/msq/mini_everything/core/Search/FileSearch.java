@@ -1,4 +1,4 @@
-package com.msq.mini_everything.core.Search;
+package com.msq.mini_everything.core.search;
 
 import com.msq.mini_everything.core.model.Condition;
 import com.msq.mini_everything.core.model.Thing;

@@ -1,6 +1,6 @@
-package com.msq.mini_everything.core.interceptor.impl;
+package com.msq.mini_everything.core.Interceptor.impl;
 
-import com.msq.mini_everything.core.interceptor.FileInterceptor;
+import com.msq.mini_everything.core.Interceptor.FileInterceptor;
 
 import java.io.File;
 

@@ -26,13 +26,13 @@ public class MiniEverythingCmd {
         //启动后台清理线程
         manager.startBackgroundClearThread();
 
-        /**
-         * 启动监控
-         */
+
+//         启动监控
         manager.startFileSystemMonitor();
 
         //交互式
         interactive(manager);
+
     }
 
 
@@ -57,23 +57,19 @@ public class MiniEverythingCmd {
             String deptOrderByAscParam = "--deptOrderByAsc=";
             if (param.startsWith(deptOrderByAscParam)){
                 int index = param.indexOf("=");
-                if (index < deptOrderByAscParam.length() - 1){
-                    String deptOrderByAscStr = param.substring(index + 1);
-                    config.setDeptOrder(Boolean.parseBoolean(deptOrderByAscStr));
-                }
+                String deptOrderByAscStr = param.substring(index + 1);
+                config.setDeptOrder(Boolean.parseBoolean(deptOrderByAscStr));
             }
             String includePathParam = "--includePath=";
             if (param.startsWith(includePathParam)){
                 int index = param.indexOf("=");
-                if (index < includePathParam.length() - 1){
-                    String includePathStr = param.substring(index + 1);
-                    String[] includePaths = includePathStr.split(";");
-                    if (includePaths.length > 0){
-                        config.getIncludePath().clear();
-                    }
-                    for (String p : includePaths){
-                        config.getIncludePath().add(p);
-                    }
+                String includePathStr = param.substring(index + 1);
+                String[] includePaths = includePathStr.split(";");
+                if (includePaths.length > 0){
+                    config.getIncludePath().clear();
+                }
+                for (String p : includePaths){
+                    config.getIncludePath().add(p);
                 }
             }
             String excludePathParam = "--excludePath=";

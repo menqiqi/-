@@ -116,6 +116,23 @@ public class MiniEverythingCmd {
                     continue;
                 }
             }
+            //处理history，可以自己设置查找最近的几条历史命令
+            if (input.startsWith("history")){
+                String[] values = input.split(" ");
+                if (values.length == 1){
+                    //用户没有设置查找命令的个数
+                    history(historyList.size()-1);
+                    continue;
+                }else if (values.length == 2){
+                    //设置了个数
+                    int num = Integer.parseInt(values[1]);
+                    history(num);
+                    continue;
+                }else {
+                    help();
+                    continue;
+                }
+            }
             switch (input){
                 case "help":
                     help();
@@ -125,9 +142,6 @@ public class MiniEverythingCmd {
                     return;
                 case "index":
                     index(manager);
-                    break;
-                case "history":
-                    history();
                     break;
                 default:
                     help();
@@ -163,13 +177,25 @@ public class MiniEverythingCmd {
         System.out.println("命令列表：");
         System.out.println("帮助 help");
         System.out.println("索引 index");
+        System.out.println("查找历史命令 history [number]");
         System.out.println("搜索 search <name> [<file-Type> img | doc | bin | archive | other]");
-        System.out.println("查找历史命令 history");
         System.out.println("退出 quit");
     }
 
-    private static void history(){
-        for (int i = 0; i < historyList.size()-1; i++)
-            System.out.println(historyList.get(i));
+    private static void history(int num){
+        //要查找的个数是从1开始的，但是遍历list是从0开始的，为了统一，先给num-1
+        num = num - 1;
+        if (num < 0){
+            help();
+        }else if (num <= historyList.size()-1){
+            //输出最近的num条命令
+            for (int i = historyList.size()-2-num; i <= historyList.size()-2; i++){
+                System.out.println(historyList.get(i));
+            }
+        }else {
+            for (int i = 0; i < historyList.size()-1; i++){
+                System.out.println(historyList.get(i));
+            }
+        }
     }
 }

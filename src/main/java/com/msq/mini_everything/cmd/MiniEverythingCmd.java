@@ -5,12 +5,15 @@ import com.msq.mini_everything.core.MiniEverythingManager;
 import com.msq.mini_everything.core.model.Condition;
 import com.msq.mini_everything.core.model.Thing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MiniEverythingCmd {
 
     private static Scanner scanner = new Scanner(System.in);
+
+    private static ArrayList<String> historyList = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -89,6 +92,7 @@ public class MiniEverythingCmd {
         while (true){
             System.out.print("请输入：");
             String input = scanner.nextLine();
+            historyList.add(input);
             //优先处理search
             if (input.startsWith("search")){
                 //search name [file_type]
@@ -121,6 +125,9 @@ public class MiniEverythingCmd {
                     return;
                 case "index":
                     index(manager);
+                    break;
+                case "history":
+                    history();
                     break;
                 default:
                     help();
@@ -157,6 +164,12 @@ public class MiniEverythingCmd {
         System.out.println("帮助 help");
         System.out.println("索引 index");
         System.out.println("搜索 search <name> [<file-Type> img | doc | bin | archive | other]");
+        System.out.println("查找历史命令 history");
         System.out.println("退出 quit");
+    }
+
+    private static void history(){
+        for (int i = 0; i < historyList.size()-1; i++)
+            System.out.println(historyList.get(i));
     }
 }
